@@ -49,6 +49,6 @@ test/         widget_test.dart
 ```
 
 ## Progress
-- [x] Week 1: Setup, core screens, 10 dummy teachers and events
+- [ ] Week 1: Setup, core screens, 10 dummy teachers and events
 - [ ] Week 2: Firebase integration, full submit and view flow
 - [ ] Week 3: UI polish, testing, bug fixes, demo video and documentation
