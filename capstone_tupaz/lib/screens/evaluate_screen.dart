@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:capstone_tupaz/data/dummy_data.dart';
 import 'package:capstone_tupaz/models/review.dart';
 import 'package:capstone_tupaz/models/target.dart';
+import 'package:capstone_tupaz/services/review_service.dart';
 
 class EvaluateScreen extends StatefulWidget {
   final VoidCallback onSubmitted;
@@ -23,6 +24,7 @@ class _EvaluateScreenState extends State<EvaluateScreen> {
 
   Target selected = dummyTargets.first;
   int rating = 0;
+  bool isSubmitting = false;
   final TextEditingController commentController = TextEditingController();
 
   @override
@@ -31,14 +33,33 @@ class _EvaluateScreenState extends State<EvaluateScreen> {
     super.dispose();
   }
 
-  void submit() {
-    dummyReviews.add(
-      Review(
-        targetId: selected.id,
-        rating: rating,
-        comment: commentController.text.trim(),
-      ),
-    );
+  Future<void> submit() async {
+    setState(() {
+      isSubmitting = true;
+    });
+
+    try {
+      await ReviewService.addReview(
+        Review(
+          targetId: selected.id,
+          rating: rating,
+          comment: commentController.text.trim(),
+        ),
+      );
+    } catch (error) {
+      if (!mounted) return;
+      setState(() {
+        isSubmitting = false;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Could not submit your feedback. Please try again.'),
+        ),
+      );
+      return;
+    }
+
+    if (!mounted) return;
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -48,6 +69,7 @@ class _EvaluateScreenState extends State<EvaluateScreen> {
 
     setState(() {
       rating = 0;
+      isSubmitting = false;
       commentController.clear();
     });
     widget.onSubmitted();
@@ -135,8 +157,8 @@ class _EvaluateScreenState extends State<EvaluateScreen> {
             SizedBox(
               width: double.infinity,
               child: FilledButton(
-                onPressed: rating == 0 ? null : submit,
-                child: const Text('Submit feedback'),
+                onPressed: (rating == 0 || isSubmitting) ? null : submit,
+                child: Text(isSubmitting ? 'Submitting...' : 'Submit feedback'),
               ),
             ),
           ],

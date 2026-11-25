@@ -1,14 +1,15 @@
-import 'package:capstone_tupaz/data/dummy_data.dart';
 import 'package:capstone_tupaz/models/review.dart';
 import 'package:capstone_tupaz/models/target.dart';
 import 'package:flutter/material.dart';
 
 class ResultCard extends StatelessWidget {
   final Target target;
+  final List<Review> reviews;
 
   const ResultCard({
     super.key,
-    required this.target
+    required this.target,
+    required this.reviews,
   });
 
   Widget starBar(int stars, List<Review> reviews) {
@@ -33,9 +34,9 @@ class ResultCard extends StatelessWidget {
 
    @override
   Widget build(BuildContext context) {
-    final reviews = reviewsFor(target.id);
     final count = reviews.length;
-    final average = averageFor(target.id);
+    final total = reviews.fold<int>(0, (sum, r) => sum + r.rating);
+    final average = count == 0 ? 0.0 : total / count;
     final filled = average.round();
     final comments = reviews.where((r) => r.comment.isNotEmpty).toList();
 
