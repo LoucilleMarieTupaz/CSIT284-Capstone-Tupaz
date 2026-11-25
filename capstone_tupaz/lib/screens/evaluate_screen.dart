@@ -4,7 +4,8 @@ import 'package:capstone_tupaz/models/review.dart';
 import 'package:capstone_tupaz/models/target.dart';
 
 class EvaluateScreen extends StatefulWidget {
-  const EvaluateScreen({super.key});
+  final VoidCallback onSubmitted;
+  const EvaluateScreen({super.key, required this.onSubmitted});
 
   @override
   State<EvaluateScreen> createState() => _EvaluateScreenState();
@@ -49,6 +50,7 @@ class _EvaluateScreenState extends State<EvaluateScreen> {
       rating = 0;
       commentController.clear();
     });
+    widget.onSubmitted();
   }
 
   @override
@@ -65,7 +67,7 @@ class _EvaluateScreenState extends State<EvaluateScreen> {
             ),
             const SizedBox(height: 8),
             DropdownButtonFormField<Target>(
-              value: selected,
+              initialValue: selected,
               isExpanded: true,
               decoration: const InputDecoration(border: OutlineInputBorder()),
               items: [
